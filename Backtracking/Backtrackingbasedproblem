@@ -1,1 +1,336 @@
+//Backtracking based Proble that can be record from video lecture 
+//N Queen Problem
+// Rat in a Maze
+// Sudoku Problem
+//N Queen Problem
+#include <bits/stdc++.h>
+using namespace std;
+
+#define N 4 
+  
+int board[N][N];  
+
+void printSolution(int board[N][N]) 
+{ 
+    for (int i = 0; i < N; i++) { 
+        for (int j = 0; j < N; j++) 
+            printf(" %d ", board[i][j]); 
+        printf("\n"); 
+    } 
+} 
+  
+bool isSafe(int row, int col) 
+{ 
+  
+    for (int i = 0; i < col; i++) 
+        if (board[row][i]) 
+            return false; 
+  
+    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) 
+        if (board[i][j]) 
+            return false; 
+  
+    for (int i = row, j = col; j >= 0 && i < N; i++, j--) 
+        if (board[i][j]) 
+            return false; 
+  
+    return true; 
+} 
+  
+bool solveRec(int col) 
+{ 
+    if (col == N) 
+        return true; 
+  
+    for (int i = 0; i < N; i++) { 
+     
+        if (isSafe(i, col)) { 
+            board[i][col] = 1; 
+  
+            if (solveRec(col + 1)) 
+                return true; 
+  
+            board[i][col] = 0;
+        } 
+    } 
+  
+    return false; 
+} 
+  
+bool solve() 
+{
+    if (solveRec(0) == false) { 
+        printf("Solution does not exist"); 
+        return false; 
+    } 
+  
+    printSolution(board); 
+    return true; 
+}
+
+int main() {
+	
+	solve(); 
+    return 0; 
+	
+}
+
+//Rat in a Maze
+#include <bits/stdc++.h>
+using namespace std;
+
+#define N 4 
+  
+bool solveMazeRec( 
+    int maze[N][N], int x, 
+    int y, int sol[N][N]); 
+  
+void printSolution(int sol[N][N]) 
+{ 
+    for (int i = 0; i < N; i++) { 
+        for (int j = 0; j < N; j++) 
+            printf(" %d ", sol[i][j]); 
+        printf("\n"); 
+    } 
+} 
+  
+bool isSafe(int maze[N][N], int i, int j) 
+{  
+    return ( i < N && j < N && maze[i][j] == 1);
+} 
+ 
+bool solveMaze(int maze[N][N]) 
+{ 
+    int sol[N][N] = { { 0, 0, 0, 0 }, 
+                      { 0, 0, 0, 0 }, 
+                      { 0, 0, 0, 0 }, 
+                      { 0, 0, 0, 0 } }; 
+  
+    if (solveMazeRec(maze, 0, 0, sol) == false) { 
+        printf("Solution doesn't exist"); 
+        return false; 
+    } 
+  
+    printSolution(sol); 
+    return true; 
+} 
+
+bool solveMazeRec( int maze[N][N], int i, int j, int sol[N][N]) 
+{ 
+    if ( i == N - 1 && j == N - 1 && maze[i][j] == 1) { 
+        sol[i][j] = 1; 
+        return true; 
+    } 
+  
+    if (isSafe(maze, i, j) == true) { 
+        sol[i][j] = 1; 
+  
+        if (solveMazeRec(maze, i + 1, j, sol) == true) 
+            return true; 
+  
+        if (solveMazeRec(maze, i, j + 1, sol) == true) 
+            return true; 
+  
+        sol[i][j] = 0; 
+    } 
+  
+    return false; 
+}
+
+int main() {
+	
+	int maze[N][N] = { { 1, 0, 0, 0 }, 
+                       { 1, 1, 0, 1 }, 
+                       { 0, 1, 0, 0 }, 
+                       { 1, 1, 1, 1 } }; 
+  
+    solveMaze(maze);    
+    return 0;  
+	
+}
+
+//Sudoku Problem
+#include <bits/stdc++.h> 
+using namespace std; 
+#define N 9 
+
+bool isSafe(int board[N][N],int row, int col, int num) 
+    { 
+     
+        for (int d = 0; d < N; d++)  
+        { 
+            
+            if (board[row][d] == num) { 
+                return false; 
+            } 
+        } 
+  
+        for (int r = 0; r < N; r++)  
+        { 
+               
+            if (board[r][col] == num)  
+            { 
+                return false; 
+            } 
+        }  
+        int s = (int)sqrt(N); 
+        int boxRowStart = row - row % s; 
+        int boxColStart = col - col % s; 
+  
+        for (int r = boxRowStart; 
+             r < boxRowStart + s; r++)  
+        { 
+            for (int d = boxColStart; 
+                 d < boxColStart + s; d++)  
+            { 
+                if (board[r][d] == num)  
+                { 
+                    return false; 
+                } 
+            } 
+        } 
+  
+        return true; 
+    } 
+
+bool solve(int board[N][N],int n) 
+{ 
+	    int row = -1; 
+        int col = -1; 
+        bool isEmpty = true; 
+        for (int i = 0; i < n; i++)  
+        { 
+            for (int j = 0; j < n; j++)  
+            { 
+                if (board[i][j] == 0)  
+                { 
+                    row = i; 
+                    col = j; 
+                    isEmpty = false; 
+                    break; 
+                } 
+            } 
+            if (!isEmpty) { 
+                break; 
+            } 
+        } 
+  
+        if (isEmpty)  
+        { 
+            return true; 
+        } 
+        
+        for (int num = 1; num <= n; num++)  
+        { 
+            if (isSafe(board, row, col, num))  
+            { 
+                board[row][col] = num; 
+                if (solve(board, n))  
+                { 
+                    // print(board, n); 
+                    return true; 
+                } 
+                else 
+                { 
+                    board[row][col] = 0; 
+                } 
+            } 
+        } 
+        return false; 
+} 
+
+void printGrid(int grid[N][N]) 
+{ 
+	for (int row = 0; row < N; row++) 
+	{ 
+		for (int col = 0; col < N; col++) 
+			cout << grid[row][col] << " "; 
+		cout << endl; 
+	} 
+} 
+ 
+int main() 
+{ 
+	int grid[N][N] = { { 3, 0, 6, 5, 0, 8, 4, 0, 0 }, 
+					{ 5, 2, 0, 0, 0, 0, 0, 0, 0 }, 
+					{ 0, 8, 7, 0, 0, 0, 0, 3, 1 }, 
+					{ 0, 0, 3, 0, 1, 0, 0, 8, 0 }, 
+					{ 9, 0, 0, 8, 6, 3, 0, 0, 5 }, 
+					{ 0, 5, 0, 0, 9, 0, 6, 0, 0 }, 
+					{ 1, 3, 0, 0, 0, 0, 2, 5, 0 }, 
+					{ 0, 0, 0, 0, 0, 0, 0, 7, 4 }, 
+					{ 0, 0, 5, 2, 0, 6, 3, 0, 0 } }; 
+	if (solve(grid,N) == true) 
+		printGrid(grid); 
+	else
+		cout << "No solution exists"; 
+
+	return 0; 
+} 
+
+//Backtracking Lec
+Given a string print all thos permutations which do not contain "AB" as a substring
+Naive Code
+#include <bits/stdc++.h>
+using namespace std;
+
+void permute(string str, int l, int r){
+    
+    if(l==r){
+        if(str.find("AB")==string::npos){
+            cout<<str<<" ";
+        }
+        return;
+    }else{
+        for(int i=l;i<=r;i++){
+            swap(str[i],str[l]);
+            permute(str,l+1,r);
+            swap(str[i],str[l]);
+        }   
+    }
+}
+
+int main() {
+	
+	string str="ABC";
+	
+    permute(str,0,str.length()-1);      
+    return 0;  
+	
+}
+//Efficient Code
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isSafe(string str,int l, int i, int r){
+    if(l!=0 && str[l-1]=='A' && str[i]=='B')
+        return false;
+    if(r==(l+1) && str[i]=='A' && str[l]=='B')
+        return false;
+    return true;
+}
+
+void permute(string str, int l, int r){
+    
+    if(l==r){
+        cout<<str<<" ";
+        return;
+    }else{
+        for(int i=l;i<=r;i++){
+            if(isSafe(str,l,i,r)){
+                swap(str[i],str[l]);
+                permute(str,l+1,r);
+                swap(str[i],str[l]);}
+        }   
+    }
+}
+
+int main() {
+	
+	string str="ABC";
+	
+    permute(str,0,str.length()-1);      
+    return 0;  
+	
+}
 
